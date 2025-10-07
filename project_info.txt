@@ -1,0 +1,92 @@
+-- Shop Table
+CREATE TABLE shop(
+    shop_id SERIAL PRIMARY KEY,
+    name TEXT NOT NULL,
+    category TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Sales Table
+CREATE TABLE sales(
+    sale_id SERIAL PRIMARY KEY,
+    sale_name TEXT NOT NULL,
+    discount NUMERIC(5,2) CHECK (discount >= 0 AND discount <= 100)
+);
+
+-- Product Table
+CREATE TABLE product(
+    prod_id SERIAL PRIMARY KEY,
+    prod_type TEXT NOT NULL,
+    brand TEXT DEFAULT 'local',
+    color TEXT DEFAULT 'multi',
+    price NUMERIC(10,2) CHECK (price > 0),
+    stock INT DEFAULT 0,
+    on_sale BOOLEAN DEFAULT FALSE,
+    sale_id INT REFERENCES sales(sale_id)
+);
+
+-- Customer Table
+CREATE TABLE customer(
+    cust_id SERIAL PRIMARY KEY,
+    name TEXT NOT NULL,
+    email TEXT UNIQUE,
+    phone TEXT,
+    loyalty_points INT DEFAULT 0,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Orders Table
+CREATE TABLE orders(
+    order_id SERIAL PRIMARY KEY,
+    cust_id INT REFERENCES customer(cust_id),
+    shop_id INT REFERENCES shop(shop_id),
+    total_amount NUMERIC(12,2),
+    status TEXT DEFAULT 'PLACED',
+    order_date TIMESTAMPTZ DEFAULT NOW(),
+    return_due_date DATE
+);
+
+-- Order Items Table
+CREATE TABLE order_items(
+    item_id SERIAL PRIMARY KEY,
+    order_id INT REFERENCES orders(order_id),
+    prod_id INT REFERENCES product(prod_id),
+    quantity INT NOT NULL,
+    price NUMERIC(10,2) NOT NULL
+);
+
+-- Reviews Table
+create table reviews (
+    review_id bigint generated always as identity primary key,
+    cust_id bigint references customers(cust_id) on delete cascade,
+    prod_id bigint references products(prod_id) on delete cascade,
+    rating numeric(2,1) check (rating >= 0 and rating <= 5),
+    comment text,
+    created_at timestamp default now()
+);
+
+
+-- Notifications Table
+CREATE TABLE notification(
+    notification_id SERIAL PRIMARY KEY,
+    cust_id INT REFERENCES customer(cust_id),
+    type TEXT NOT NULL, -- 'Sale', 'ReturnReminder', 'Offer', 'Alert'
+    message TEXT NOT NULL,
+    related_id INT DEFAULT NULL, -- sale_id, order_id, etc.
+    notify_date DATE NOT NULL,
+    read BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+
+
+
+
+
+https://xc6ipkvxih4tcqv6scgsp5.streamlit.app/
+
+
+https://github.com/eedekarunakar/Retail-Inventory-Order-Management-System-Core-Python-.git
+GitHub - eedekarunakar/Retail-Inventory-Order-Management-System-Core-Python-
+Contribute to eedekarunakar/Retail-Inventory-Order-Management-System-Core-Python- development by creating an account on GitHub.
+ 
